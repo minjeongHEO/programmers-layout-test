@@ -1,24 +1,24 @@
-import React from 'react';
-import logo from './logo.svg';
+import { useState } from 'react';
 import './App.css';
+import Table from './components/Table';
 
 function App() {
+  const [selectedOption, setSelectedOption] = useState<string>('');
+  const handleOrderType = ({ target: { value } }:React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setSelectedOption(value);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <div className="section __order">
+        <select id="order_type" value={selectedOption} onChange={handleOrderType}>
+          <option value="1">최근등록순</option>
+          <option value="2">조회순</option>
+        </select>
+      </div>
+      <div className="section">
+        <Table orderType={selectedOption} />
+      </div>
     </div>
   );
 }
