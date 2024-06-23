@@ -2,10 +2,13 @@ import { useState } from 'react';
 import './App.css';
 import Table from './components/Table';
 
+export type OrderType = '1' | '2';
+
 function App() {
-  const [selectedOption, setSelectedOption] = useState<string>('');
+  const [selectedOption, setSelectedOption] = useState<OrderType>('1');
+
   const handleOrderType = ({ target: { value } }:React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setSelectedOption(value);
+    setSelectedOption(value as OrderType);
   };
 
   return (

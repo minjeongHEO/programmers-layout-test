@@ -2,6 +2,7 @@ import './Table.css';
 import Card from './Card';
 import { useEffect, useState } from 'react';
 import dataOfPosts from '../data/posts.json';
+import { OrderType } from '../App';
 
 export interface PostsType {
   title:string
@@ -10,60 +11,56 @@ export interface PostsType {
   bookmark:boolean
 }
 
-function Table({ orderType }:any) {
-  const [posts, setPosts] = useState<PostsType[]>([]);
+
+
+function Table({ orderType }:{orderType:OrderType}) {
+  const [posts, setPosts] = useState<PostsType[]>(dataOfPosts);
+
+  const handleBookmark= (index: number)=> {
+    setPosts((prevPosts) => {
+      const updatedPosts = [...prevPosts];
+      updatedPosts[index] = { ...updatedPosts[index], bookmark: !updatedPosts[index].bookmark };
+      return sortData(updatedPosts);
+    });
+  }
 
   const orderViewCount = (data:PostsType[]) => {
-    const sortedData = [...data].sort((a, b) => {
+    return [...data].sort((a, b) => {
       if (a.bookmark && !b.bookmark) return -1;
       if (!a.bookmark && b.bookmark) return 1;
-
-      const viewA = a.views;
-      const viewB = b.views;
-
-      return viewB - viewA;
+      return b.views - a.views;
     });
-
-    setPosts(sortedData);
   };
 
   const orderLatest = (data:PostsType[]) => {
-    const sortedData = [...data].sort((a, b) => {
+    return [...data].sort((a, b) => {
       if (a.bookmark && !b.bookmark) return -1;
       if (!a.bookmark && b.bookmark) return 1;
-
-      const dataA = new Date(a.upload_date);
-      const dataB = new Date(b.upload_date);
-
-      return dataB.getTime() - dataA.getTime();
+      return new Date(b.upload_date).getTime() - new Date(a.upload_date).getTime();
     });
-
-    setPosts(sortedData);
   };
 
-  const fetchData = (data:PostsType[]) => {
-    // 1. 최근 등록순
-    if (orderType === '1') {
-      orderLatest(data);
-      return;
-    }
-    // 2. 조회순
-    if (orderType === '2') {
-      orderViewCount(data);
-      return;
-    }
+  const sortByType = {
+    '1':(data: PostsType[])=>orderLatest(data),
+    '2':(data: PostsType[])=>orderViewCount(data)
+  }
+  const sortData = (data:PostsType[]) => {
+    if (!Array.isArray(data)) return dataOfPosts;
 
-    setPosts(data);
+    return sortByType[orderType] ? sortByType[orderType](data) : data ;
   };
 
   useEffect(() => {
-    fetchData(dataOfPosts as PostsType[]);
+    setPosts((prevPosts) => sortData(prevPosts));
   }, [orderType]);
 
   return (
     <>
-      {posts.map(({ title, views, upload_date, bookmark }, index) => {
-        return <Card key={`card-${upload_date}-${index}`} date={upload_date} title={title} viewCount={views} isBookmarked={bookmark} />;
+      {posts && posts.map(({ title, views, upload_date, bookmark }, index) => {
+        return <Card key={`card-${upload_date}-${index}`} date={upload_date} title={title} viewCount={views} isBookmarked={bookmark} 
+        handleBookmark={handleBookmark}
+        index={index}
+        />;
       })}
       </>
   );
