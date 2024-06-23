@@ -10,7 +10,6 @@ interface CardProps {
 
 function Card({ date, title, viewCount, isBookmarked = false }:CardProps) {
   return (
-    <div className="card-container ">
       <li className="card--container" id="card1">
         <div className="header">
           <div className="card--tag">
@@ -32,7 +31,6 @@ function Card({ date, title, viewCount, isBookmarked = false }:CardProps) {
           </div>
         </div>
       </li>
-    </div>
   );
 }
 

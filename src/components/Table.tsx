@@ -61,11 +61,11 @@ function Table({ orderType }:any) {
   }, [orderType]);
 
   return (
-    <div className=".card-container">
-      {posts.map(({ title, views, upload_date, bookmark }) => {
-        return <Card date={upload_date} title={title} viewCount={views} isBookmarked={bookmark} />;
+    <>
+      {posts.map(({ title, views, upload_date, bookmark }, index) => {
+        return <Card key={`card-${upload_date}-${index}`} date={upload_date} title={title} viewCount={views} isBookmarked={bookmark} />;
       })}
-    </div>
+      </>
   );
 }
 
